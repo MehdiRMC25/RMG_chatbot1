@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chat Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Prompt Popup -->
+  <div id="chat-prompt" class="chat-prompt hidden">
+    <div class="prompt-inner">
+      <img src="/static/chatbot1agent1.png" alt="Agent" class="agent-avatar">
+      <div>
+        <p><strong>Köməyə ehtiyacınız var?</strong><br>Let's chat</p>
+        <button onclick="showChat()" class="btn-chat">Gəlin danışaq</button>
+        <button onclick="hidePrompt()" class="btn-no">Xeyr, təşəkkür edirəm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Box -->
+  <div id="chatbox" class="chatbox hidden">
+    <div class="chatbox-header">
+      <img src="/static/chatbot1agent1.png" alt="Agent" class="agent-avatar">
+      <h3>Virtual Məsləhətçi</h3>
+    </div>
+    <div id="chat-content" class="chat-content">
+      <p>Assistant: Salam! Bu necə yardımçı ola bilərəm?</p>
+    </div>
+    <div class="chatbox-footer">
+      <input id="user-input" type="text" placeholder="Mesajınızı yazın...">
+      <button onclick="sendMessage()">Göndər</button>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
