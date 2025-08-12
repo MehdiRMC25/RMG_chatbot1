@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rmg-chatbot1
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn RMG_chatbot:app
+    autoDeploy: true
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: INDEX_DIR
+        value: /opt/render/project/src/faiss_rmg
+
