@@ -1,0 +1,7 @@
+flask
+flask-cors
+openai==1.78.1
+python-dotenv
+langchain-community
+langchain-openai
+faiss-cpu
