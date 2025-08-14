@@ -37,7 +37,7 @@ retriever = db.as_retriever()
 # Load LLM
 llm = ChatOpenAI(
     model_name="gpt-5",
-    temperature=0.0,
+    temperature=1.0,
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
