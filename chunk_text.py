@@ -2,7 +2,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 
 # ✅ Load text from policy.txt
-with open(r"D:\Rewire Model Consulting\Use Cases\Website Chatbot creation\Chatbot1test_VS code files\policy.txt", "r", encoding="utf-8") as f:
+with open(r"D:\"C:\Users\Mehdi\Documents\GitHub\RMG_chatbot1\policy.txt", "r", encoding="utf-8") as f:
     full_text = f.read()
 
 # ✅ Wrap it as a LangChain Document
