@@ -5,6 +5,59 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+# --- Email dependencies & simple detectors ---
+import os, re, smtplib
+from email.message import EmailMessage
+
+PHONE_RE = re.compile(r'(?:\+?\d[\d\-\s()]{7,}\d)')   # simple phone detector
+EMAIL_RE = re.compile(r'[\w\.-]+@[\w\.-]+\.\w+')     # simple email detector
+
+def send_lead_email(user_text: str, page_url: str = "", session_id: str = "") -> None:
+    """Send lead email when phone/email detected in chatbot message."""
+
+    host = os.getenv("SMTP_HOST")
+    port_str = os.getenv("SMTP_PORT")
+    user = os.getenv("SMTP_USER")
+    pwd  = os.getenv("SMTP_PASS")
+    to   = os.getenv("LEAD_TO_EMAIL")
+
+    if not all([host, port_str, user, pwd, to]):
+        print("❌ Lead email skipped: missing SMTP env vars")
+        return
+
+    try:
+        port = int(port_str)
+    except ValueError:
+        print(f"❌ Invalid SMTP_PORT: {port_str}")
+        return
+
+    msg = EmailMessage()
+    msg["Subject"] = "📩 New Lead from Chatbot"
+    msg["From"]    = user
+    msg["To"]      = to
+    msg.set_content(
+        f"Chatbot lead captured\n\n"
+        f"Session: {session_id}\n"
+        f"Page: {page_url}\n"
+        f"Message: {user_text}\n"
+    )
+
+    try:
+        if port == 465:
+            with smtplib.SMTP_SSL(host, port, timeout=10) as s:
+                s.login(user, pwd)
+                s.send_message(msg)
+        else:  # assume 587
+            with smtplib.SMTP(host, port, timeout=10) as s:
+                s.starttls()
+                s.login(user, pwd)
+                s.send_message(msg)
+
+        print("✅ Lead email sent.")
+    except Exception as e:
+        print("❌ Lead email error:", repr(e))
+
+       
 # LangChain / RAG imports
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
@@ -36,7 +89,7 @@ retriever = db.as_retriever()
 
 # Load LLM
 llm = ChatOpenAI(
-    model_name="gpt-5",
+    model="gpt-5",
     temperature=1.0,
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
@@ -58,7 +111,16 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
+    # Optional: capture page URL and session ID for context
+    page_url   = data.get("page_url", request.headers.get("Referer", ""))
+    session_id = request.cookies.get("session_id", "")
+
     user_message = data.get('message', '').strip()
+    # Trigger email if the user message contains an email or phone number
+    if EMAIL_RE.search(user_message) or PHONE_RE.search(user_message):
+        print("Attempting to send email to:", "inquiry@rewiremodel.com")
+        send_lead_email(user_message, page_url=page_url, session_id=session_id)
+
     logging.info("📩 User message: %s", user_message)
 
     if not user_message:
