@@ -63,6 +63,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.chat_models import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
 
 # Load environment variables (for local testing or Render.com)
 load_dotenv()
@@ -94,12 +95,29 @@ llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
+# ---- System Prompt Guardrails ----
+system_prompt = """You are RMG’s virtual assistant.
+Keep answers under 3–4 sentences.
+Guide visitors to understand services and encourage them to contact us.
+Do not generate or share full or partial project plans, marketing strategies, frameworks, or documents.
+Do not copy or summarise extracts from internal consulting materials.
+Instead, explain services in general terms and redirect users to our team for tailored solutions."""
+
+# Custom prompt template with system instruction
+prompt = ChatPromptTemplate.from_messages([
+    ("system", system_prompt),
+    ("human", "Use the following context to answer the question, but DO NOT copy it directly or provide extracts.\n\nContext:\n{context}\n\nQuestion: {question}")
+])
+
 # RAG chain setup
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     retriever=retriever,
     chain_type="stuff",  # simplest RAG chain type
-    return_source_documents=False
+    return_source_documents=False,
+    chain_type_kwargs={
+        "prompt": prompt
+    }
 )
 
 # Serve frontend
