@@ -101,7 +101,8 @@ Keep answers under 3–4 sentences.
 Guide visitors to understand services and encourage them to contact us.
 Do not generate or share full or partial project plans, marketing strategies, frameworks, or documents.
 Do not copy or summarise extracts from internal consulting materials.
-Instead, explain services in general terms and redirect users to our team for tailored solutions."""
+Instead, explain services in very concise adn general terms, and redirect users to our team for tailored solutions. 
+At the end of every reply, politely invite the visitor to share their contact details (email or phone) so our team can follow up."""
 
 # Custom prompt template with system instruction
 prompt = ChatPromptTemplate.from_messages([
