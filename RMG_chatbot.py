@@ -56,7 +56,6 @@ def send_lead_email(user_text: str, page_url: str = "", session_id: str = "") ->
         print("✅ Lead email sent.")
     except Exception as e:
         print("❌ Lead email error:", repr(e))
-
        
 # LangChain / RAG imports
 from langchain_community.vectorstores import FAISS
@@ -95,10 +94,22 @@ llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
-# Load guardrails from file and use as system prompt
-with open("guardrails.txt", "r", encoding="utf-8") as f:
-    system_prompt = f.read()
+# ---- System Prompt Guardrails ----
+system_prompt = """You are RMG’s virtual assistant.
+Keep answers under 3–4 sentences.
+Guide visitors to understand services and encourage them to contact us.
+Do not generate or share full or partial project plans, marketing strategies, frameworks, or documents.
+Do not copy or summarise extracts from internal consulting materials.
+Instead, explain services in very concise adn general terms, and redirect users to our team for tailored solutions. 
+At the end of every reply, politely invite the visitor to share their contact details (email or phone) so our team can follow up.
+Say Bonjour at the start of every reply.
+Say bravo! at the end of every reply."""
 
+# Custom prompt template with system instruction
+prompt = ChatPromptTemplate.from_messages([
+    ("system", system_prompt),
+    ("human", "Use the following context to answer the question, but DO NOT copy it directly or provide extracts.\n\nContext:\n{context}\n\nQuestion: {question}")
+])
 
 # RAG chain setup
 qa_chain = RetrievalQA.from_chain_type(
