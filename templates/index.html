@@ -28,10 +28,18 @@
     </div>
     <div id="chat-content" class="chat-content">
       <p>Assistant: Salam! Bu necə yardımçı ola bilərəm?</p>
+
+        <!-- Typing indicator goes here -->
+      <div id="typing-indicator" class="typing-indicator" style="display: none;">
+        <span></span><span></span><span></span>
+  </div>
+</div>
+  
     </div>
     <div class="chatbox-footer">
       <input id="user-input" type="text" placeholder="Mesajınızı yazın...">
       <button onclick="sendMessage()">Göndər</button>
+
     </div>
   </div>
 
