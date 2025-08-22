@@ -91,6 +91,7 @@ retriever = db.as_retriever()
 llm = ChatOpenAI(
     model="gpt-5",
     temperature=1.0,
+    reasoning_effort="minimal",  # ✅ speeds up first token time
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
